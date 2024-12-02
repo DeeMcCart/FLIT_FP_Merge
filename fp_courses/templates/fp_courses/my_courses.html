@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- Blog Entries Column -->
+        <div class="col-12 mt-3 left">
+            <!-- DMcC 21/11/23 the below search field text from stackoverflow.com re adding a search field-->
+            <form class="form-inline my-2 my-lg-0" action="{% url 'home' %}">
+                <input type="search"   placeholder="Search by tag" aria-label="Search" name="search">
+                <button class="btn btn-signup right" type="submit">Search</button>  
+            </form>
+            <div class="row">
+                <!-- DMcC 21/11/23 method of pagination altered, now receiving data in 8-article paginated format page_obj-->
+                {% for article in page_obj %}
+                <!-- DMcC 15/11/23 Testing with col-md-3 rather than 4 to fit more articles onto a page -->
+                <div class="col-md-3">
+                    <!-- similarly card mb-3 rather than md-4 -->
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="image-container">
+                                <!-- 15/11/23 DMcC making picture clickable to see article detail -->
+                                <a href=" {% url 'article_detail' article.slug %}">
+                                {% if "placeholder" in article.featured_image.url %}
+                                <img class="card-img-top rounded"
+                                    src="https://codeinstitute.s3.amazonaws.com/fullstack/blog/default.jpg" alt="Placeholder image for article">
+                                {% else %}
+                                <img class="card-img-top rounded" src=" {{ article.featured_image.url }}" alt="Article image">
+                                {% endif %}
+                                <div class="image-flash">
+                                    <p class="author">Author: {{ article.author }}</p>
+                                </div> <!-- end div image-flash -->
+                                </a>
+                            </div> <!-- end div image-container -->
+                            <a href=" {% url 'article_detail' article.slug %}" class="article-link">
+                                <h2 class="card-title">{{ article.title }}</h2>
+                                <p class="card-text">{{ article.excerpt }}</p>
+                            </a>
+                            <hr>
+                            <!-- DMcC 15/11/23 changed the below to show the last updated, rather than created, date for each article-->
+                            <p class="card-text text-muted h6">{{ article.updated_on }} 
+                            <!-- <i class="far fa-heart"></i> {{ article.number_of_likes }} -->
+                            <!-- would like to bring likes functionality through to this article summary section -->
+                            {% if user.is_authenticated %}
+                            <!-- allow/activate button push on likes for authenticated users -->
+                            <form class="d-inline" action="{% url 'article_like' article.slug %}" method="POST">
+                                {% csrf_token %}
+                                {% if liked %}
+                                    <button type = "submit"  name="blogarticle_id" value = "{{article.slug}}" class="btn-like">
+                                    <!-- DMcC 16/11/23 change heart icon to thumbs-up-->    
+                                    <i class = "text-muted fas fa-thumbs-up" data-bs-toggle="tooltip" data-bs-placement="top" title="# Likes" aria-hidden="true"></i></button>{{article.number_of_likes}}
+                                {% else %}
+                                    <button type = "submit" name="blogarticle_id" value = "{{article.slug}}" class="btn-like">
+                                    <!-- DMcC 16/11/23 change heart icon to thumbs-up--> 
+                                    <i class = "text-muted far fa-thumbs-up" data-bs-toggle="tooltip" data-bs-placement="top" title="Like"></i></button>{{article.number_of_likes}}
+                                {% endif %}
+                            </form>
+                            <!-- Number of valid comments  -->
+                                <i class="text-muted far fa-comments" data-bs-toggle="tooltip" data-bs-placement="top" title="Responses"></i> {{ article.number_of_valid_comments }}
+                                
+                                <!-- If user is authenticated, activate bookmarks button -->
+                                <form class="d-inline" action="{% url 'article_bookmark' article.slug %}" method="POST">
+                                    {% csrf_token %}
+                                    {% if bookmarked %}
+                                        <button type = "submit"  name="blogarticle_id" value = "{{article.slug}}" class="btn-like">
+                                        <i class = "text-muted fas fa-bookmark" data-bs-toggle="tooltip" data-bs-placement="top" title="Comment"></i></button>{{article.number_of_bookmarks}}
+                                    {% else %}
+                                        <button type = "submit" name="blogarticle_id" value = "{{article.slug}}" class="btn-like">
+                                        <i class = "text-muted far fa-bookmark" data-bs-toggle="tooltip" data-bs-placement="top" title="Save"></i></button>{{article.number_of_bookmarks}}
+                                    {% endif %}
+                                </form>
+                        
+                            {% else %}
+                            <!-- user not authenticated just show neutral images for likes comments bookmarks -->
+                                <i class = "text-muted far fa-thumbs-up" data-bs-toggle="tooltip" data-bs-placement="top" title="Like"></i>{{article.number_of_likes}}
+                                <i class="text-muted far fa-comments" data-bs-toggle="tooltip" data-bs-placement="top" title="Comment"></i> {{ article.number_of_valid_comments }}
+                                <i class="text-muted far fa-bookmark" data-bs-toggle="tooltip" data-bs-placement="top" title="Save"></i> {{article.number_of_bookmarks}}
+                            {% endif %} <!-- end if user is authenticated -->                                                        
+                            </div>
+                        </div>
+                    </div>
+                    <!-- DMcC 15/11/23 change the default row break to divisible by 4 rather than by 3 -->
+                    {% if forloop.counter|divisibleby:4 %}
+                    </div>
+                    <div class = "row">
+                    {% endif %}
+                {% endfor %}
+                    
+                </div>
+            </div>
+        </div>
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li><a href="?page={{ page_obj.previous_page_number }}" class="page-link">&laquo; </a></li>
+            {% endif %}
+            <li class="page-link">PAGE {{page_obj.number}} </li>
+            {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.next_page_number }}" class="page-link"> &raquo;</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+<!-- DMcC 16/11/23 the following script needed to control tooltip display above the hovered element-->    
+<script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+</script>
+
+{%endblock%}

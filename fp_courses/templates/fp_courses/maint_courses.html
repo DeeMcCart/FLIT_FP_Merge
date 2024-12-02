@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_header %}
+    <div class="container header-container">
+        <div class="row">
+            <div class="col"></div>
+        </div>
+    </div>
+{% endblock %}
+
+<!-- This template is used to control the sys admin maintenance screen for multiple courses -->
+<!-- Articles are displayed in tabular form with the ability to add new -->
+<!-- At row level, can click to maintain, delete, toggle published flag, or preview an course -->
+{% block content %}
+{% if request.user.is_superuser %}
+    <div class="overlay"></div>
+    <div class="container-fluid" id="courses-container">
+        <table class="table table-bordered table-hover ">
+            <thead class="table-secondary">
+                <!-- DMcC 09/10/24:  table headings from stephen -->    
+                <tr>
+                <th></th>
+                <th></th>
+                <th>Title/Slug</th>
+                <th>Course Code</th>
+                <th>Published?</th>
+                <th>Author</th>
+                <th>Created</th>
+                <th>Updated</th>
+                <th>Image</th>
+                </tr>
+            </thead>
+            <!-- Place one blank line at top of grid for Product Add-->
+            <tr class="text-muted {{order.order_status}}">
+                <td><a href="{% url 'add_course' %}" title="Add new course"><i class="far fa-add icon-edit"></i></a></td>
+                <td><a href="{% url 'add_course' %}" title="Add new course">Add</a></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>              
+            </tr>
+            {% for course in courses %}
+                <tr class="text-muted">
+                    <td><a href="{% url 'edit_course' course.course_code %}" title="Edit existing course"><i class="far fa-edit icon-edit"></i></a></td>
+                    <!-- see subform used instead of this
+                     <td><a href="" title="Delete existing course"><i class='far fa-trash-alt icon-delete text-danger'></i></a></td> -->
+                    <!--- Ste 11/10/24 Table details from Stephen -->    
+                    <td>
+                        <form action="{% url 'delete_course' course.course_code %}" method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" title="Delete existing course" style="background:none; border:none; padding:0;">
+                                <i class='far fa-trash-alt icon-delete text-danger'></i>
+                            </button>
+                        </form>
+                    </td>
+                    <td><a href="{% url 'course_preview' course.course_code %}" title="PreView course (new tab)" class="text-muted"  target="_blank">{{course.title}}</a></td>
+                    <td>{{ course.course_code }}</td>
+                    <td>{{ course.status|yesno:"Y,N" }}</td>
+                    <td class="align-middle">{{ course.author }}</td>
+                    <td class="date">{{ course.created_on|date:"d M y" }}</td>
+                    <td class="date">{{ course.updated_on|date:"d M y" }}</td>
+                    <td class="p-0 align-middle">
+                        {% if course.featured_image %}
+                            <img class="img-thumbnail rounded-circle img-zoom" src="{{ course.featured_image.url }}" alt="Image">
+                        {% else %} 
+                            <img class="img-thumbnail rounded-circle img-zoom" src="{{ STATIC }}euro-money.png" alt="Image">
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div> <!-- end class container-fluid -->
+
+    <!-- DMcC 13/02/24 scroll-up button at end of reviews -->
+    <div class="btt-button shadow-sm rounded-0 border border-black">
+        <a class="btt-link d-flex h-100">
+            <i class="scroll-arrow fas fa-arrow-up text-black mx-auto my-auto"></i>
+        </a>	
+    </div>
+{% endif %}#
+{% endblock %}
+
+{% block postloadjs %}
+    {{ block.super }}
+    <!-- JS to permit page upscroll to top of page -->
+    <script type="text/javascript">
+		$('.btt-link').click(function(e) {
+			window.scrollTo(0,0)
+		})
+	</script>
+    <!-- JS to prevent display of delivery-banner-->
+    <script>    
+        document.getElementById("delivery-banner").classList.add("hide-div");
+    </script>
+{% endblock %}
