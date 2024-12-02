@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.core.paginator import Paginator  # Specifically imported 
 from django.db.models import Q  # This is a text search capability
-from .models import Course, Cohort, CourseContent, Quiz
+from .models import Course, Cohort, CourseContents, Quiz
 
 from .forms import CourseForm   # Cuasing all the issues. 
 

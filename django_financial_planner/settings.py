@@ -15,7 +15,9 @@ import os
 import dj_database_url
 from django.contrib.messages import constants as messages
 if os.path.isfile("env.py"):
-        import env
+    import env
+else:
+    print("No env.py file found")    
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -38,6 +40,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://8000-deemccart-flitfpmerge-uuv2t1vze42.ws-eu115.gitpod.io',
     'https://8000-deemccart-flitfpmerge-4jnbvxtlp9z.ws-eu116.gitpod.io',
     'https://8000-deemccart-flitfpmerge-4jnbvxtlp9z.ws-eu116.gitpod.io',
+    'https://8000-deemccart-flitfpmerge-hmu0l28c474.ws-eu117.gitpod.io',
     os.environ.get("CSRF_TRUSTED_ORIGINS"),
     ]
 
@@ -49,6 +52,7 @@ ALLOWED_HOSTS = ['8000-deemccart-cipp4financia-vv93ot4q6wj.ws-eu105.gitpod.io',
                  'flit-e60c994ef0ea.herokuapp.com',
                  '8000-deemccart-flitfpmerge-4jnbvxtlp9z.ws-eu116.gitpod.io',
                  '127.0.0.1',
+                 '8000-deemccart-flitfpmerge-hmu0l28c474.ws-eu117.gitpod.io',
                  os.environ.get("ALLOWED_HOSTS"),
                  
                  ]

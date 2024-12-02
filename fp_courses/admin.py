@@ -1,17 +1,17 @@
 from django.contrib import admin
 from datetime import datetime
 from .models import User
-from .models import Course, CourseContent, Cohort, Quiz
+from .models import Course, CourseContents, Cohort, Quiz
 
 # Register your models here.
 # The UserProfile model is a custom extension of allauth User model
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('course_code', 'version', 'disp_seq', 'title', 'status',)
+    list_display = ('disp_seq', 'course_code', 'title', 'version', 'status',)
     search_fields = ['title']
 
-@admin.register(CourseContent)
-class CourseContentAdmin(admin.ModelAdmin):
+@admin.register(CourseContents)
+class CourseContentsAdmin(admin.ModelAdmin):
     list_display = ('course_code', 'version', 'seq_num', 'article',)
     search_fields = ['article']
 

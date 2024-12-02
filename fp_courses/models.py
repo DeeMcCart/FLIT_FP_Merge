@@ -37,13 +37,13 @@ class Course(models.Model):
         ordering = ['disp_seq', 'course_code', 'version']
 
     def __str__(self):
-        return self.course_code  # Removed print statement
+        return f"{self.course_code} {self.title}"  # Removed print statement
 
     def is_valid_today(self):
         # You can implement your validation logic here
         pass
 
-class CourseContent(models.Model):
+class CourseContents(models.Model):
     """ Course is a set of articles delivered in a particular sequence
     fields: course_code, title1, slug, title2, version, author, featured_image, effective_from, effective_to"""
     course_code = models.ForeignKey(Course, on_delete=models.CASCADE,
