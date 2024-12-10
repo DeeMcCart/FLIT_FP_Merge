@@ -106,7 +106,9 @@ class Cohort(models.Model):
 class Quiz(models.Model):
     """ Quiz is a multichoice set of questions related to a particle topic or article
         fields: course_code, title1, slug, title2, version, author, featured_image, effective_from, effective_to"""
-    quiz_code = models.CharField(max_length=25, primary_key = True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE,
+                               related_name="quiz", db_constraint=False)
+    quiz_code = models.IntegerField( primary_key = True)
     question_text = models.CharField(max_length = 200, default='Question text goes here?')
     ans1_text = models.CharField(max_length=200, default="Answer1 goes here")
     ans2_text = models.CharField(max_length=200, default="Answer2 goes here")
@@ -114,7 +116,9 @@ class Quiz(models.Model):
     ans4_text = models.CharField(max_length=200, default="Answer4 goes here")
     correct_ans = models.IntegerField()
     explanation = models.CharField(max_length=300, default="Correct answer is X:  This is because ......")
-    status = models.IntegerField(choices=STATUS, default=0)    
+    updated_on = models.DateField(auto_now=True)
+    status = models.IntegerField(choices=STATUS, default=0)   
+    
     
     class Meta:
         """ returns an overall list """

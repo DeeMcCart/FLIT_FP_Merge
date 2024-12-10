@@ -14,6 +14,10 @@
 <!-- At row level, can click to maintain, delete, toggle published flag, or preview an course -->
 {% block content %}
 {% if request.user.is_superuser %}
+<br>
+<td><a href="{% url 'maint_quizzes' %}" title=" Quiz maintenance page ">Quiz maintenance page </a></td>
+<br>
+<br>
     <div class="overlay"></div>
     <div class="container-fluid" id="courses-container">
         <table class="table table-bordered table-hover ">

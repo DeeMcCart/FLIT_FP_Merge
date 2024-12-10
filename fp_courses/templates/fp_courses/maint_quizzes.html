@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_header %}
+    <div class="container header-container">
+        <div class="row">
+            <div class="col"></div>
+        </div>
+    </div>
+{% endblock %}
+
+<!-- This template is used to control the sys admin maintenance screen for multiple quizs -->
+<!-- Articles are displayed in tabular form with the ability to add new -->
+<!-- At row level, can click to maintain, delete, toggle published flag, or preview an quiz -->
+{% block content %}
+{% if request.user.is_superuser %}
+<br>
+<br>
+    <div class="overlay"></div>
+    <div class="container-fluid" id="quizzes-container">
+        <table class="table table-bordered table-hover ">
+            <thead class="table-secondary">
+                <!-- DMcC 09/10/24:  table headings from stephen -->    
+                <tr>
+                <th></th>
+                <th></th>
+                <th>Quiz Code</th>
+                <th>Question Text</th>
+                <th>Answer 1</th>
+                <th>Answer 2</th>
+                <th>Answer 3</th>
+                <th>Answer 4</th>
+                <th>Correct Answer</th>
+                <th>Explanation</th>
+                <th>Status</th>
+                </tr>
+            </thead>
+            <!-- Place one blank line at top of grid for Product Add-->
+            <tr class="text-muted {{order.order_status}}">
+                <td><a href="{% url 'add_quiz' %}" title="Add new quiz"><i class="far fa-add icon-edit"></i></a></td>
+                <td><a href="{% url 'add_quiz' %}" title="Add new quiz">Add Quiz</a></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>  
+                <td></td>                
+            </tr>
+            {% for quiz in quiz %}
+                <tr class="text-muted">
+                    <td><a href="{% url 'edit_quiz' quiz.quiz_code %}" title="Edit existing quiz"><i class="far fa-edit icon-edit"></i></a></td>
+                    <!-- see subform used instead of this
+                     <td><a href="" title="Delete existing quiz"><i class='far fa-trash-alt icon-delete text-danger'></i></a></td> -->
+                    <!--- Ste 11/10/24 Table details from Stephen -->    
+                    <td>
+                        <form action="{% url 'delete_quiz' quiz.quiz_code %}" method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" title="Delete existing quiz" style="background:none; border:none; padding:0;">
+                                <i class='far fa-trash-alt icon-delete text-danger'></i>
+                            </button>
+                        </form>
+                    </td>
+                    <td><a href="{% url 'quiz_preview' quiz.quiz_code %}" title="PreView quiz (new tab)" class="text-muted"  target="_blank">{{quiz.quiz_code}}</a></td>
+                    <td class="align-middle">{{ quiz.question_text }}</td>
+                    <td class="align-middle">{{ quiz.ans1_text }}</td>
+                    <td class="align-middle">{{ quiz.ans2_text }}</td>
+                    <td class="align-middle">{{ quiz.ans3_text }}</td>
+                    <td class="align-middle">{{ quiz.ans4_text }}</td>
+                    <td class="align-middle">{{ quiz.correct_ans }}</td>
+                    <td class="align-middle">{{ quiz.explanation }}</td>
+                    <td>{{ quiz.status|yesno:"Y,N" }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div> <!-- end class container-fluid -->
+
+    <!-- DMcC 13/02/24 scroll-up button at end of reviews -->
+    <div class="btt-button shadow-sm rounded-0 border border-black">
+        <a class="btt-link d-flex h-100">
+            <i class="scroll-arrow fas fa-arrow-up text-black mx-auto my-auto"></i>
+        </a>	
+    </div>
+{% endif %}#
+{% endblock %}
+
+{% block postloadjs %}
+    {{ block.super }}
+    <!-- JS to permit page upscroll to top of page -->
+    <script type="text/javascript">
+		$('.btt-link').click(function(e) {
+			window.scrollTo(0,0)
+		})
+	</script>
+    <!-- JS to prevent display of delivery-banner-->
+    <script>    
+        document.getElementById("delivery-banner").classList.add("hide-div");
+    </script>
+{% endblock %}

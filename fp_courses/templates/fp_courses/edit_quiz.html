@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block page_header %}
+    <div class="container header-container">
+        <div class="row">
+            <div class="col"></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <hr>
+                <h2 class="logo-font mb-4">quiz Management</h2>
+                <h5 class="text-muted">Edit a quiz</h5>
+                <hr>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <form method="POST" action="{% url 'edit_quiz' quiz.quiz_code %}" class="form mb-2" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        {% if field.name == 'content' %}
+                            <div id="summernote" name="content">{{ field }}</div>
+                        {% else %}
+                            {% if field.name == "featured_image" %}
+                                {{ field }}
+                            {% else %}    
+                                {{ field | as_crispy_field }}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    <div class="text-right">
+                        <a class="btn btn-outline-black rounded-0" href="{% url 'maint_quizzes' %}">Cancel</a>
+                        <button class="btn btn-black rounded-0" type="submit">Update quiz</button>
+                    </div>
+                </form>
+            </div> <!-- "col-12 col-md-6" -->           
+        </div> <!-- end div class "row" -->
+    </div> <!-- end div class "container"-->
+
+    <!-- 'return to top' arrow -->
+    <div class="btt-button shadow-sm rounded-0 border border-black">
+        <a class="btt-link d-flex h-100">
+            <i class="fas fa-arrow-up text-black mx-auto my-auto"></i>
+        </a>	
+    </div>
+{% endblock %}
+
+{% block postloadjs %}
+    {{ block.super }}
+<!-- script to improve image handling -->
+    <script type="text/javascript">
+        $('#new-image').change(function() {
+            var file = $('#new-image')[0].files[0];
+            $('#filename').text(`Image will be set to: ${file.name}`);
+        });
+    </script>
+
+<!-- DMcC 09/11/24 adding in summernote script here
+ although it already exists in base.html -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#summernote').summernote();
+        });
+    </script>
+
+
+    <!-- DMcC 19/11/24:  removed this bit of orphaned code  $(document).ready(function() { -->
+    
+<!-- script to control 'return to top' arrow -->
+    <script type="text/javascript">
+        $('.btt-link').click(function(e) {
+            window.scrollTo(0,0)
+        })
+    </script>
+{% endblock %}
